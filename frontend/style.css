@@ -1,0 +1,1031 @@
+/* ================================================
+   NUMBER MAYHEM - Futuristic Hacker Terminal Theme
+   ================================================ */
+
+/* ================================================
+   GLOBAL STYLES
+   ================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color palette - dark terminal with green/cyan glow */
+    --bg-primary: #0a0e14;
+    --bg-secondary: #0d1117;
+    --bg-panel: #11161d;
+    --bg-input: #0a0e14;
+    --border-color: #1e2a38;
+    --text-primary: #c8d6e5;
+    --text-dim: #5a6b7d;
+    --text-bright: #ffffff;
+    --green: #00ff9d;
+    --green-dim: #00b36b;
+    --cyan: #00d4ff;
+    --cyan-dim: #0099bb;
+    --gold: #ffd700;
+    --red: #ff4757;
+    --red-dim: #cc3344;
+    --magenta: #ff6bff;
+    --yellow: #ffd700;
+    --orange: #ff9f43;
+}
+
+html, body {
+    height: 100%;
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    overflow-x: hidden;
+}
+
+body {
+    /* CRT scanline effect overlay */
+    background-image:
+        repeating-linear-gradient(
+            0deg,
+            transparent 0px,
+            transparent 2px,
+            rgba(0, 0, 0, 0.15) 2px,
+            rgba(0, 0, 0, 0.15) 4px
+        );
+    min-height: 100vh;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ================================================
+   BOOT SCREEN
+   ================================================ */
+
+#boot-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.boot-content {
+    text-align: center;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.boot-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--green);
+    text-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+    margin-bottom: 30px;
+    letter-spacing: 4px;
+    animation: boot-glow 2s ease-in-out infinite;
+}
+
+@keyframes boot-glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(0, 255, 157, 0.5); }
+    50% { text-shadow: 0 0 40px rgba(0, 255, 157, 0.8); }
+}
+
+.boot-line {
+    color: var(--cyan);
+    text-align: left;
+    margin: 8px 0;
+    font-size: 0.9rem;
+    min-height: 1.2em;
+    opacity: 0;
+}
+
+.boot-line.visible {
+    opacity: 1;
+    animation: boot-fade 0.3s ease-in;
+}
+
+@keyframes boot-fade {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.boot-skip {
+    margin-top: 30px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* ================================================
+   MAIN GAME CONTAINER
+   ================================================ */
+
+#game-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 15px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================================================
+   HEADER BAR
+   ================================================ */
+
+.header-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.header-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--green);
+    letter-spacing: 3px;
+    text-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--green);
+    font-size: 0.8rem;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--green);
+    animation: status-pulse 2s ease-in-out infinite;
+}
+
+@keyframes status-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--green); }
+    50% { opacity: 0.5; box-shadow: 0 0 2px var(--green); }
+}
+
+/* ================================================
+   PLAYER INFO BAR
+   ================================================ */
+
+.player-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 10px 20px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-panel);
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+.player-info {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.player-info .label {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+}
+
+.player-info .value {
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.player-info .value.gold {
+    color: var(--gold);
+}
+
+/* ================================================
+   MAIN CONTENT - Two Panel Layout
+   ================================================ */
+
+.main-content {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    margin-bottom: 10px;
+}
+
+.game-panel,
+.output-panel {
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-panel);
+    border-radius: 4px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.game-panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.output-panel {
+    flex: 1.2;
+    min-width: 300px;
+}
+
+.panel-title {
+    color: var(--cyan);
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 12px;
+}
+
+.panel-subtitle {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+/* ================================================
+   GAME INFO
+   ================================================ */
+
+.game-info {
+    margin-bottom: 15px;
+}
+
+.info-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    border-bottom: 1px dashed rgba(30, 42, 56, 0.5);
+}
+
+.info-line .label {
+    color: var(--text-dim);
+    font-size: 0.75rem;
+}
+
+.info-line .value {
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* ================================================
+   DIFFICULTY SELECTION
+   ================================================ */
+
+.difficulty-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.difficulty-button {
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.8rem;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.difficulty-button:hover {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.2);
+}
+
+.difficulty-button .diff-icon {
+    font-size: 1.2rem;
+    margin-right: 6px;
+}
+
+.difficulty-button .diff-name {
+    font-weight: bold;
+}
+
+.difficulty-button .diff-details {
+    display: block;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-top: 4px;
+}
+
+/* ================================================
+   GUESS INPUT AREA
+   ================================================ */
+
+.guess-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.prompt {
+    color: var(--green);
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+#guess-input {
+    flex: 1;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 12px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+#guess-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 8px rgba(0, 255, 157, 0.2);
+}
+
+.terminal-button {
+    background-color: var(--bg-input);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 10px 15px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+}
+
+.terminal-button:hover {
+    background-color: rgba(0, 255, 157, 0.1);
+    box-shadow: 0 0 10px rgba(0, 255, 157, 0.3);
+}
+
+.terminal-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* ================================================
+   ITEM BUTTONS (during gameplay)
+   ================================================ */
+
+.item-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.item-button {
+    background-color: var(--bg-input);
+    border: 1px solid var(--magenta);
+    color: var(--magenta);
+    padding: 6px 10px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.item-button:hover {
+    background-color: rgba(255, 107, 255, 0.1);
+    box-shadow: 0 0 8px rgba(255, 107, 255, 0.3);
+}
+
+.item-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ================================================
+   GAME OVER ACTIONS
+   ================================================ */
+
+.game-over-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* ================================================
+   OUTPUT TERMINAL
+   ================================================ */
+
+.output-terminal {
+    flex: 1;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 12px;
+    overflow-y: auto;
+    max-height: 500px;
+    min-height: 200px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
+.output-line {
+    margin: 3px 0;
+    word-wrap: break-word;
+}
+
+.output-line.dim {
+    color: var(--text-dim);
+}
+
+.output-line.green {
+    color: var(--green);
+}
+
+.output-line.cyan {
+    color: var(--cyan);
+}
+
+.output-line.gold {
+    color: var(--gold);
+}
+
+.output-line.red {
+    color: var(--red);
+}
+
+.output-line.magenta {
+    color: var(--magenta);
+}
+
+.output-line.yellow {
+    color: var(--yellow);
+}
+
+.output-line.white {
+    color: var(--text-bright);
+}
+
+.output-line.system {
+    color: var(--cyan);
+    font-style: italic;
+}
+
+/* Blinking cursor at the end of output */
+.output-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background-color: var(--green);
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    vertical-align: middle;
+}
+
+/* ================================================
+   NAVIGATION BAR
+   ================================================ */
+
+.nav-bar {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    background-color: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+.nav-button {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--cyan);
+    padding: 8px 15px;
+    font-family: inherit;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+}
+
+.nav-button:hover {
+    border-color: var(--cyan);
+    color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+}
+
+/* ================================================
+   MODAL PANELS
+   ================================================ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+}
+
+.modal-content {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--cyan);
+    border-radius: 6px;
+    width: 90%;
+    max-width: 700px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 0 30px rgba(0, 212, 255, 0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.modal-title {
+    color: var(--cyan);
+    font-size: 1rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.modal-coins {
+    color: var(--gold);
+    font-size: 0.85rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: color 0.2s;
+}
+
+.modal-close:hover {
+    color: var(--red);
+}
+
+.modal-body {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* ================================================
+   SHOP ITEMS
+   ================================================ */
+
+.shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background-color: var(--bg-input);
+    transition: border-color 0.2s;
+}
+
+.shop-item:hover {
+    border-color: var(--gold);
+}
+
+.shop-item-info {
+    flex: 1;
+}
+
+.shop-item-name {
+    color: var(--text-primary);
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.shop-item-desc {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-top: 3px;
+}
+
+.shop-item-cost {
+    color: var(--gold);
+    font-size: 0.8rem;
+    margin: 0 15px;
+    white-space: nowrap;
+}
+
+.shop-item-count {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+.shop-buy-button {
+    background-color: var(--bg-input);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.shop-buy-button:hover {
+    background-color: rgba(255, 215, 0, 0.1);
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+.shop-buy-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* ================================================
+   INVENTORY ITEMS
+   ================================================ */
+
+.inventory-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background-color: var(--bg-input);
+}
+
+.inventory-item-info {
+    flex: 1;
+}
+
+.inventory-item-name {
+    color: var(--text-primary);
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.inventory-item-desc {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-top: 3px;
+}
+
+.inventory-item-count {
+    color: var(--magenta);
+    font-size: 0.8rem;
+    margin: 0 15px;
+    white-space: nowrap;
+}
+
+.inventory-use-button {
+    background-color: var(--bg-input);
+    border: 1px solid var(--magenta);
+    color: var(--magenta);
+    padding: 6px 12px;
+    font-family: inherit;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.inventory-use-button:hover {
+    background-color: rgba(255, 107, 255, 0.1);
+    box-shadow: 0 0 8px rgba(255, 107, 255, 0.3);
+}
+
+.inventory-use-button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.empty-message {
+    color: var(--text-dim);
+    text-align: center;
+    padding: 30px;
+    font-size: 0.8rem;
+}
+
+/* ================================================
+   STATS PANEL
+   ================================================ */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.stat-item {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-input);
+}
+
+.stat-label {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.stat-value.gold {
+    color: var(--gold);
+}
+
+.stat-value.green {
+    color: var(--green);
+}
+
+.stat-value.red {
+    color: var(--red);
+}
+
+.stat-value.yellow {
+    color: var(--yellow);
+}
+
+.stat-value.cyan {
+    color: var(--cyan);
+}
+
+.stat-value.magenta {
+    color: var(--magenta);
+}
+
+.stats-section {
+    margin-top: 15px;
+}
+
+.stats-section-title {
+    color: var(--cyan);
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 5px;
+}
+
+.difficulty-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 0.8rem;
+}
+
+.difficulty-stat .label {
+    color: var(--text-primary);
+}
+
+.difficulty-stat .value {
+    color: var(--text-dim);
+}
+
+/* ================================================
+   ACHIEVEMENTS PANEL
+   ================================================ */
+
+.achievement-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background-color: var(--bg-input);
+}
+
+.achievement-item.unlocked {
+    border-color: var(--green);
+    background-color: rgba(0, 255, 157, 0.05);
+}
+
+.achievement-item.locked {
+    opacity: 0.5;
+}
+
+.achievement-icon {
+    font-size: 1.5rem;
+    min-width: 30px;
+    text-align: center;
+}
+
+.achievement-info {
+    flex: 1;
+}
+
+.achievement-name {
+    color: var(--text-primary);
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+.achievement-item.unlocked .achievement-name {
+    color: var(--green);
+}
+
+.achievement-desc {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    margin-top: 3px;
+}
+
+.achievement-status {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
+.achievement-item.unlocked .achievement-status {
+    color: var(--green);
+}
+
+/* ================================================
+   ACHIEVEMENT POPUP NOTIFICATION
+   ================================================ */
+
+.achievement-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2000;
+    animation: popup-slide 0.5s ease-out;
+}
+
+@keyframes popup-slide {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.achievement-popup-content {
+    background-color: var(--bg-panel);
+    border: 2px solid var(--gold);
+    border-radius: 6px;
+    padding: 15px 20px;
+    min-width: 250px;
+    box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    text-align: center;
+}
+
+.achievement-popup-title {
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+}
+
+.achievement-popup-icon {
+    font-size: 2rem;
+    margin-bottom: 5px;
+}
+
+.achievement-popup-name {
+    color: var(--text-bright);
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.achievement-popup-desc {
+    color: var(--text-dim);
+    font-size: 0.7rem;
+}
+
+/* ================================================
+   RESPONSIVE DESIGN
+   ================================================ */
+
+@media (max-width: 768px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    .game-panel,
+    .output-panel {
+        min-width: 100%;
+    }
+
+    .difficulty-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .player-bar {
+        gap: 8px;
+    }
+
+    .header-title {
+        font-size: 1rem;
+    }
+
+    .boot-title {
+        font-size: 1.8rem;
+    }
+
+    .nav-bar {
+        flex-wrap: wrap;
+    }
+
+    .shop-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .shop-item-cost,
+    .shop-item-count {
+        margin: 0;
+    }
+
+    .inventory-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .inventory-item-count {
+        margin: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    #game-container {
+        padding: 8px;
+    }
+
+    .guess-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .game-over-actions {
+        flex-direction: column;
+    }
+
+    .terminal-button {
+        width: 100%;
+    }
+}
