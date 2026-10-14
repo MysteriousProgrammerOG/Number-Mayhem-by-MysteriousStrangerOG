@@ -89,6 +89,10 @@ pytest tests/test_game.py
 
 This runs all the backend game logic tests to make sure everything works correctly.
 
+# 5. The Website
+
+If you don't want to have to do all the above steps, you can simply visit https://number-mayhem-by-mysteriousstrangerog.onrender.com/ to play! 
+
 ---
 
 ## 🌐 How the Frontend Communicates with the Backend
